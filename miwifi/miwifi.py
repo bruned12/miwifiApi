@@ -66,11 +66,13 @@ class Api:
         self.token = req['token']
 
     def verifyToken(self):
-        while(True):
+        for i in range(5):
+            print('尝试解决401,次数:%d'%(i))
             if(self.api_misystem_messages()['code'] == 401):
                 self.login()
             else:
-                break
+                return
+        raise Exception('[ERROR][CODE:407]')
 
     # GET请求
     def api_misystem_messages(self) -> dict:
