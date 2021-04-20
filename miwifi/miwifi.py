@@ -25,7 +25,7 @@ class Api:
         self.password = password
         self.login()
 
-    def _post(self, url, parm) -> dict:
+    def _post(self, url:str, parm:dict) -> dict:
         while(True):
             print('[UP][POST][Url]:%s [Data]%s' %
                   (self.addr+url, json.dumps(parm)))
@@ -38,7 +38,7 @@ class Api:
                 break
         return r
 
-    def _get(self, url) -> dict:
+    def _get(self, url:str) -> dict:
         while(True):
             print('[UP][GET][Url]:%s' % (self.addr+url))
             req = requests.get(url=self.addr+url).text
@@ -50,10 +50,10 @@ class Api:
                 break
         return r
 
-    def post(self, url, parm) -> dict:
+    def post(self, url:str, parm:dict) -> dict:
         return self._post(url=self.url+url, parm=parm)
 
-    def get(self, url) -> dict:
+    def get(self, url:str) -> dict:
         return self._get(url=self.url+url)
 
     def login(self) -> dict:
@@ -159,13 +159,13 @@ class Api:
 
     # POST请求
     # 单个端口转发添加
-    def api_xqnetwork_add_redirect(self, name, proto, sport, ip, dport) -> dict:
+    def api_xqnetwork_add_redirect(self, name:str, proto:int, sport:int, ip:str, dport:int) -> dict:
         return self.post('/api/xqnetwork/add_redirect', {'name': name, 'proto': proto, 'sport': sport, 'ip': ip, 'dport': dport})
 
     # 单个/范围端口转发删除
-    def api_xqnetwork_delete_redirect(self, port, proto) -> dict:
+    def api_xqnetwork_delete_redirect(self, port:int, proto:int) -> dict:
         return self.post('/api/xqnetwork/delete_redirect', {'port': port, 'proto': proto})
 
     #范围端口转发
-    def api_xqnetwork_add_range_redirect(self,name,proto,fport,tport,ip) -> dict:
+    def api_xqnetwork_add_range_redirect(self,name:str,proto:int,fport:int,tport:int,ip:str) -> dict:
         return self.post('/api/xqnetwork/add_range_redirect',{'name': name, 'proto': proto, 'fport': fport, 'tport': tport, 'ip': ip})
