@@ -4,6 +4,7 @@ import random as Random
 from Crypto.Hash import SHA1
 import json
 import requests
+import re
 
 
 def sha1(string):
@@ -18,14 +19,14 @@ class Api:
     addr = ''
     password = ''
 
-    def __init__(self, key, deviceId, addr, password) -> None:
+    def __init__(self, addr: str, password: str, key: str = None, deviceId: str = None) -> None:
         self.key = key
         self.deviceId = deviceId
         self.addr = addr
         self.password = password
         self.login()
 
-    def _post(self, url:str, parm:dict) -> dict:
+    def _post(self, url: str, parm: dict) -> dict:
         while(True):
             print('[UP][POST][Url]:%s [Data]%s' %
                   (self.addr+url, json.dumps(parm)))
@@ -38,7 +39,7 @@ class Api:
                 break
         return r
 
-    def _get(self, url:str) -> dict:
+    def _get(self, url: str) -> dict:
         while(True):
             print('[UP][GET][Url]:%s' % (self.addr+url))
             req = requests.get(url=self.addr+url).text
@@ -50,13 +51,22 @@ class Api:
                 break
         return r
 
-    def post(self, url:str, parm:dict) -> dict:
+    def post(self, url: str, parm: dict) -> dict:
         return self._post(url=self.url+url, parm=parm)
 
-    def get(self, url:str) -> dict:
+    def get(self, url: str) -> dict:
         return self._get(url=self.url+url)
 
     def login(self) -> dict:
+        if(self.key == None or self.deviceId == None):
+            print("未填入key和deviceId，尝试自动获取")
+            try:
+                req = requests.get(url=self.addr+"/cgi-bin/luci/web").text
+                self.key = re.findall(r"key: '(.+?)',", req)[0]
+                self.deviceId = re.findall(r"var deviceId = '(.+?)';", req)[0]
+            except:
+                raise Exception('自动获取失败请手动获取')
+            print("获取成功")
         nonce = "_".join([str(0), str(self.deviceId), str(Math.floor(
             Time.time())), str(Math.floor(Random.randint(1, 10000)))])
         param = {'username': 'admin', 'password': sha1(
@@ -67,7 +77,7 @@ class Api:
 
     def verifyToken(self):
         for i in range(5):
-            print('尝试解决401,次数:%d'%(i))
+            print('尝试解决401,次数:%d' % (i))
             if(self.api_misystem_messages()['code'] == 401):
                 self.login()
             else:
@@ -159,13 +169,13 @@ class Api:
 
     # POST请求
     # 单个端口转发添加
-    def api_xqnetwork_add_redirect(self, name:str, proto:int, sport:int, ip:str, dport:int) -> dict:
+    def api_xqnetwork_add_redirect(self, name: str, proto: int, sport: int, ip: str, dport: int) -> dict:
         return self.post('/api/xqnetwork/add_redirect', {'name': name, 'proto': proto, 'sport': sport, 'ip': ip, 'dport': dport})
 
     # 单个/范围端口转发删除
-    def api_xqnetwork_delete_redirect(self, port:int, proto:int) -> dict:
+    def api_xqnetwork_delete_redirect(self, port: int, proto: int) -> dict:
         return self.post('/api/xqnetwork/delete_redirect', {'port': port, 'proto': proto})
 
-    #范围端口转发
-    def api_xqnetwork_add_range_redirect(self,name:str,proto:int,fport:int,tport:int,ip:str) -> dict:
-        return self.post('/api/xqnetwork/add_range_redirect',{'name': name, 'proto': proto, 'fport': fport, 'tport': tport, 'ip': ip})
+    # 范围端口转发
+    def api_xqnetwork_add_range_redirect(self, name: str, proto: int, fport: int, tport: int, ip: str) -> dict:
+        return self.post('/api/xqnetwork/add_range_redirect', {'name': name, 'proto': proto, 'fport': fport, 'tport': tport, 'ip': ip})

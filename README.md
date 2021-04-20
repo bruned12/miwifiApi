@@ -20,14 +20,21 @@ if __name__ == '__main__':
     password = 'passwd'
 	
     #获取API对象 自动登入获取stok
-    api = Api(key=key, deviceId=deviceId, addr=addr, password=password)
+    api = Api(addr=addr, password=password)
+
+    #手动指定
+    #api = Api(addr=addr, password=password,key=key, deviceId=deviceId)
+
     #获取单个端口转发并打印出来
     for data in api.api_xqnetwork_portforward_list1()['list']:
         print("ip:%s:%s -> port:%s"%(data['destip'],data['srcport'],data['destport']))
+
     #添加一个端口转发
     api.api_xqnetwork_add_redirect("test",1,50,"192.168.1.114",50)
+
     #应用端口转发更改
     api.api_xqnetwork_redirect_apply()
+    
     #删除端口转发
     api.api_xqnetwork_delete_redirect(50,1)
     api.api_xqnetwork_redirect_apply()
