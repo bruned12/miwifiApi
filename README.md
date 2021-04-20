@@ -10,19 +10,19 @@
 ```python
 from miwifi.miwifi import Api
 if __name__ == '__main__':
-    # 在网页[登录界面]代码里查找'var Encrypt ='"
-    key = 'a2ffa5c9be07488bbxxxxxxxxxxxxxxx'
-    # 运行程序 设备的MAC
-    deviceId = 'xx:xx:xx:xx'
-    # 路由器地址
+    #路由器地址
     addr = 'http://192.168.1.1'
-    # 管理员密码
+    #管理员密码
     password = 'passwd'
 	
     #获取API对象 自动登入获取stok
     api = Api(addr=addr, password=password)
 
-    #手动指定
+    #手动指定key和deviceId
+    #在网页[登录界面]源代码里查找'var Encrypt ='"
+    #key = 'a2ffa5c9be07488bbxxxxxxxxxxxxxxx'
+    #运行程序 设备的MAC
+    #deviceId = 'xx:xx:xx:xx'
     #api = Api(addr=addr, password=password,key=key, deviceId=deviceId)
 
     #获取单个端口转发并打印出来
@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     #应用端口转发更改
     api.api_xqnetwork_redirect_apply()
-    
+
     #删除端口转发
     api.api_xqnetwork_delete_redirect(50,1)
     api.api_xqnetwork_redirect_apply()
